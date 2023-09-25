@@ -1,4 +1,4 @@
-package run;
+package laboratory1.run;
 
 import java.io.IOException;
 

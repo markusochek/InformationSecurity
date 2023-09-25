@@ -1,8 +1,9 @@
-package run;
+package laboratory1.run;
 
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Letters {
     private final String text;
@@ -32,14 +33,25 @@ public class Letters {
         frequencyAnalysis();
         encode();
 
+        List<Map.Entry<String, Float>> sortedQuantitativeRatioMapAnalysis = quantitativeRatioMapAnalysis.entrySet().stream().sorted(Map.Entry.comparingByValue()).collect(Collectors.toList());
+        System.out.println(sortedQuantitativeRatioMapAnalysis);
+
+
         StringBuffer decodingString = new StringBuffer();
         for (String word : encodingString.toString().split(" ")) {
             int index = 0;
 
             for (String letter : word.split("")) {
-                decodingString.append();
+                quantitativeRatioMapAnalysis.get(letter);
+//                decodingString.append();
                 ++index;
             }
+        }
+        System.out.println(decodingString);
+    }
+
+    private void sort() {
+        for (int i = 0; i < quantitativeRatioMapLocationAnalysis.entrySet().size(); i++) {
         }
     }
 
@@ -57,7 +69,7 @@ public class Letters {
         ArrayList<Integer> quantitativeRatioUpperCaseLetter = new ArrayList<>(Collections.nCopies(26, 0));
         ArrayList<Integer> quantitativeRatioLowerCaseLetter = new ArrayList<>(Collections.nCopies(26, 0));
 
-        FileInputStream fileInputStream = new FileInputStream("run/ChristieAgatha.txt");
+        FileInputStream fileInputStream = new FileInputStream("laboratory1/run/ChristieAgatha.txt");
         int i;
         int AIndex = 65;
         int aIndex = 97;
@@ -88,7 +100,7 @@ public class Letters {
             quantitativeRatioLowerCaseLetter.add(new ArrayList<>(Collections.nCopies(45, 0)));
         }
 
-        FileInputStream fileInputStream = new FileInputStream("run/ChristieAgatha.txt");
+        FileInputStream fileInputStream = new FileInputStream("laboratory1/run/ChristieAgatha.txt");
         int i;
         int AIndex = 65;
         int aIndex = 97;
@@ -135,7 +147,7 @@ public class Letters {
             quantitativeRatioLowerCaseLetter.add(new ArrayList<>(Collections.nCopies(45, 0)));
         }
 
-        FileInputStream fileInputStream = new FileInputStream("run/ChristieAgatha.txt");
+        FileInputStream fileInputStream = new FileInputStream("laboratory1/run/ChristieAgatha.txt");
         int i;
         int AIndex = 65;
         int aIndex = 97;

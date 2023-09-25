@@ -1,4 +1,4 @@
-package run;
+package laboratory1.run;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
