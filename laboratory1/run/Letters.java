@@ -1,64 +1,127 @@
 package laboratory1.run;
 
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.DoubleStream;
+import java.util.stream.Stream;
 
 public class Letters {
+    int AIndex = 65;
+    int aIndex = 97;
+
     private final String text;
     private String alphabet;
     private Map<String, String> ratios;
     private final StringBuffer encodingString;
-    private Map<String, Float> quantitativeRatioMapAnalysis;
-    private Map<String, ArrayList<Float>> quantitativeRatioMapLocationAnalysis;
-    private Map<String, ArrayList<Float>> quantitativeRatioMapAnalysisOfWord;
+    private ArrayList<Float> quantitativeRatioMapAnalysis;
+    private ArrayList<ArrayList<Float>> quantitativeRatioMapLocationAnalysis;
+    private ArrayList<ArrayList<Float>> quantitativeRatioMapAnalysisOfWord;
+    private ArrayList<ArrayList<Integer>> wordsInFile;
 
     private Float quantitativeAnalysisCount;
 
     Letters() {
-        this.text = "i play computer game";
+        this.text = "I play computer game";
         this.alphabet = "abcdefghijklmnopqrstuvwxyz";
         this.encodingString = new StringBuffer();
         this.ratios = new HashMap<>();
 
-        this.quantitativeRatioMapAnalysis = new HashMap<>();
-        this.quantitativeRatioMapLocationAnalysis = new HashMap<>();
-        this.quantitativeRatioMapAnalysisOfWord = new HashMap<>();
+        this.quantitativeRatioMapAnalysis = new ArrayList<>();
+        this.quantitativeRatioMapLocationAnalysis = new ArrayList<>();
+        this.quantitativeRatioMapAnalysisOfWord = new ArrayList<>();
+        this.wordsInFile = new ArrayList<>();
 
         this.quantitativeAnalysisCount = 0F;
     }
 
     public void main() throws IOException {
         frequencyAnalysis();
-        encode();
-
-        List<Map.Entry<String, Float>> sortedQuantitativeRatioMapAnalysis = quantitativeRatioMapAnalysis.entrySet().stream().sorted(Map.Entry.comparingByValue()).collect(Collectors.toList());
-        System.out.println(sortedQuantitativeRatioMapAnalysis);
-
+        /*encode();
 
         StringBuffer decodingString = new StringBuffer();
+*//*        List<Float> sortedQuantitativeRatioMapAnalysis = quantitativeRatioMapAnalysis.stream().sorted().collect(Collectors.toList());
+
+        List<Float> maxValuesLocationAnalysis = quantitativeRatioMapLocationAnalysis.stream().map(q -> q.stream().max(Double::compare).get()).collect(Collectors.toList());
+        List<Float> sortedQuantitativeRatioMapLocationAnalysis = maxValuesLocationAnalysis.stream().sorted().collect(Collectors.toList());
+
+        List<Float> maxValuesAnalysisOfWord = quantitativeRatioMapAnalysisOfWord.stream().map(q -> q.stream().max(Double::compare).get()).collect(Collectors.toList());
+        List<Float> sortedQuantitativeRatioMapAnalysisOfWord = maxValuesAnalysisOfWord.stream().sorted().collect(Collectors.toList());*//*
+
+        ArrayList<List<List<Symbol>>> wordsWeights = new ArrayList<>();
         for (String word : encodingString.toString().split(" ")) {
             int index = 0;
-
+            ArrayList<List<Symbol>> wordWeights = new ArrayList<>();
             for (String letter : word.split("")) {
-                quantitativeRatioMapAnalysis.get(letter);
-//                decodingString.append();
+                List<Symbol> letterWeights = new ArrayList<>();
+                for (int i = 0; i < quantitativeRatioMapAnalysis.size(); i++) {
+                    letterWeights.add(new Symbol(i, quantitativeRatioMapAnalysis.get(i) *
+                    quantitativeRatioMapLocationAnalysis.get(i).get(index) *
+                    quantitativeRatioMapAnalysisOfWord.get(i).get(word.length())));
+                }
+                letterWeights = letterWeights.stream().sorted(Comparator.reverseOrder()).collect(Collectors.toList());
+                wordWeights.add(letterWeights);
                 ++index;
             }
+            wordsWeights.add(wordWeights);
         }
-        System.out.println(decodingString);
-    }
 
-    private void sort() {
-        for (int i = 0; i < quantitativeRatioMapLocationAnalysis.entrySet().size(); i++) {
+        for (int i = 0; i < wordsWeights.size(); i++) {
+            List<List<Symbol>> wordWeights = wordsWeights.get(i);
+            for (int j = 0; j < wordWeights.size(); j++) {
+                List<Symbol> lettersWeights = wordWeights.get(j);
+                if (lettersWeights.get(0).getLocation() < 26) {
+                    System.out.println((char) (lettersWeights.get(0).getLocation() + AIndex));
+                } else {
+                    System.out.println((char) (lettersWeights.get(0).getLocation() + aIndex - 26));
+                }
+                System.out.println(lettersWeights.get(0));
+                for (int k = 0; k < lettersWeights.size(); k++) {
+
+
+                    FileInputStream fileInputStream = new FileInputStream("laboratory1/run/ChristieAgatha.txt");
+                    int n;
+                    ArrayList<Integer> words = new ArrayList<>();
+                    while((n = fileInputStream.read()) != -1) {
+                        if (n == 32) {
+
+                            words.clear();
+                            continue;
+                        }
+
+                        if (65 <= n && n < 91) {
+                            if (n == j + AIndex) {
+
+                            }
+                            words.add(n);
+                        } else if (97 <= n && n < 123) {
+                            if (n == j + aIndex) {
+
+                            }
+                            words.add(n);
+                        }
+                    }
+                    fileInputStream.close();
+
+
+
+                    lettersWeights.get(k);
+                }
+            }
         }
+
+        System.out.println(wordsWeights);
+        System.out.println(decodingString);*/
     }
 
     private void frequencyAnalysis() throws IOException {
-        quantitativeAnalysis();
+        getWordsInTxt();
+        /*quantitativeAnalysis();
         locationAnalysis();
-        quantitativeAnalysisOfWord();
+        quantitativeAnalysisOfWord();*/
 
         System.out.println(quantitativeRatioMapAnalysis);
         System.out.println(quantitativeRatioMapLocationAnalysis);
@@ -71,8 +134,6 @@ public class Letters {
 
         FileInputStream fileInputStream = new FileInputStream("laboratory1/run/ChristieAgatha.txt");
         int i;
-        int AIndex = 65;
-        int aIndex = 97;
         while((i = fileInputStream.read()) != -1) {
             if (65 <= i && i < 91) {
                 quantitativeRatioUpperCaseLetter.set(i - AIndex, quantitativeRatioUpperCaseLetter.get(i - AIndex) + 1);
@@ -84,11 +145,11 @@ public class Letters {
         }
         fileInputStream.close();
 
-        for (int j = 0; j < quantitativeRatioUpperCaseLetter.size(); j++) {
-            quantitativeRatioMapAnalysis.put(String.valueOf((char) (AIndex + j)), quantitativeRatioUpperCaseLetter.get(j) / quantitativeAnalysisCount);
+        for (Integer count : quantitativeRatioUpperCaseLetter) {
+            quantitativeRatioMapAnalysis.add(count / quantitativeAnalysisCount);
         }
-        for (int j = 0; j < quantitativeRatioLowerCaseLetter.size(); j++) {
-            quantitativeRatioMapAnalysis.put(String.valueOf((char) (aIndex + j)), quantitativeRatioLowerCaseLetter.get(j) / quantitativeAnalysisCount);
+        for (Integer count : quantitativeRatioLowerCaseLetter) {
+            quantitativeRatioMapAnalysis.add(count / quantitativeAnalysisCount);
         }
     }
 
@@ -102,8 +163,6 @@ public class Letters {
 
         FileInputStream fileInputStream = new FileInputStream("laboratory1/run/ChristieAgatha.txt");
         int i;
-        int AIndex = 65;
-        int aIndex = 97;
         int wordLength = 0;
         while((i = fileInputStream.read()) != -1) {
             if (i == 32) {
@@ -121,21 +180,19 @@ public class Letters {
         }
         fileInputStream.close();
 
-        for (int j = 0; j < quantitativeRatioUpperCaseLetter.size(); j++) {
-            ArrayList<Integer> quantitativeRatio = quantitativeRatioUpperCaseLetter.get(j);
+        for (ArrayList<Integer> quantitativeRatio : quantitativeRatioUpperCaseLetter) {
             ArrayList<Float> quantitativeRatioStorage = new ArrayList<>();
             for (Integer ratio : quantitativeRatio) {
                 quantitativeRatioStorage.add(ratio / quantitativeAnalysisCount);
             }
-            quantitativeRatioMapLocationAnalysis.put(String.valueOf((char) (AIndex + j)), quantitativeRatioStorage);
+            quantitativeRatioMapLocationAnalysis.add(quantitativeRatioStorage);
         }
-        for (int j = 0; j < quantitativeRatioLowerCaseLetter.size(); j++) {
-            ArrayList<Integer> quantitativeRatio = quantitativeRatioLowerCaseLetter.get(j);
+        for (ArrayList<Integer> quantitativeRatio : quantitativeRatioLowerCaseLetter) {
             ArrayList<Float> quantitativeRatioStorage = new ArrayList<>();
             for (Integer ratio : quantitativeRatio) {
                 quantitativeRatioStorage.add(ratio / quantitativeAnalysisCount);
             }
-            quantitativeRatioMapLocationAnalysis.put(String.valueOf((char) (aIndex + j)), quantitativeRatioStorage);
+            quantitativeRatioMapLocationAnalysis.add(quantitativeRatioStorage);
         }
     }
 
@@ -149,8 +206,6 @@ public class Letters {
 
         FileInputStream fileInputStream = new FileInputStream("laboratory1/run/ChristieAgatha.txt");
         int i;
-        int AIndex = 65;
-        int aIndex = 97;
         ArrayList<Integer> wordUpperCaseLetter = new ArrayList<>();
         ArrayList<Integer> wordLowerCaseLetter = new ArrayList<>();
         while((i = fileInputStream.read()) != -1) {
@@ -181,7 +236,7 @@ public class Letters {
             for (Integer ratio : quantitativeRatio) {
                 quantitativeRatioStorage.add(ratio / quantitativeAnalysisCount);
             }
-            quantitativeRatioMapAnalysisOfWord.put(String.valueOf((char) (AIndex + j)), quantitativeRatioStorage);
+            quantitativeRatioMapAnalysisOfWord.add(quantitativeRatioStorage);
         }
         for (int j = 0; j < quantitativeRatioLowerCaseLetter.size(); j++) {
             ArrayList<Integer> quantitativeRatio = quantitativeRatioLowerCaseLetter.get(j);
@@ -189,7 +244,7 @@ public class Letters {
             for (Integer ratio : quantitativeRatio) {
                 quantitativeRatioStorage.add(ratio / quantitativeAnalysisCount);
             }
-            quantitativeRatioMapAnalysisOfWord.put(String.valueOf((char) (aIndex + j)), quantitativeRatioStorage);
+            quantitativeRatioMapAnalysisOfWord.add(quantitativeRatioStorage);
         }
     }
 
@@ -218,5 +273,24 @@ public class Letters {
 
         int randomLetterIndex = (int) (Math.random() * this.alphabet.length());
         return this.alphabet.substring(randomLetterIndex, randomLetterIndex + 1);
+    }
+
+    private void getWordsInTxt() throws IOException {
+        FileInputStream fileInputStream = new FileInputStream("laboratory1/run/ChristieAgatha.txt");
+        int i;
+        ArrayList<Integer> word = new ArrayList<>();
+        while((i = fileInputStream.read()) != -1) {
+            if (i == 32) {
+                wordsInFile.add(word);
+                word.clear();
+                continue;
+            }
+            if (65 <= i && i < 91 || 97 <= i && i < 123) {
+                word.add(i);
+            }
+        }
+        fileInputStream.close();
+
+        System.out.println(wordsInFile);
     }
 }
