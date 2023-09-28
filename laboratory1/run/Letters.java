@@ -40,17 +40,9 @@ public class Letters {
 
     public void main() throws IOException {
         frequencyAnalysis();
-        /*encode();
+        encode();
 
-        StringBuffer decodingString = new StringBuffer();
-*//*        List<Float> sortedQuantitativeRatioMapAnalysis = quantitativeRatioMapAnalysis.stream().sorted().collect(Collectors.toList());
-
-        List<Float> maxValuesLocationAnalysis = quantitativeRatioMapLocationAnalysis.stream().map(q -> q.stream().max(Double::compare).get()).collect(Collectors.toList());
-        List<Float> sortedQuantitativeRatioMapLocationAnalysis = maxValuesLocationAnalysis.stream().sorted().collect(Collectors.toList());
-
-        List<Float> maxValuesAnalysisOfWord = quantitativeRatioMapAnalysisOfWord.stream().map(q -> q.stream().max(Double::compare).get()).collect(Collectors.toList());
-        List<Float> sortedQuantitativeRatioMapAnalysisOfWord = maxValuesAnalysisOfWord.stream().sorted().collect(Collectors.toList());*//*
-
+        ArrayList<Integer> decodingString = new ArrayList<>();
         ArrayList<List<List<Symbol>>> wordsWeights = new ArrayList<>();
         for (String word : encodingString.toString().split(" ")) {
             int index = 0;
@@ -58,70 +50,46 @@ public class Letters {
             for (String letter : word.split("")) {
                 List<Symbol> letterWeights = new ArrayList<>();
                 for (int i = 0; i < quantitativeRatioMapAnalysis.size(); i++) {
-                    letterWeights.add(new Symbol(i, quantitativeRatioMapAnalysis.get(i) *
+                    int location;
+                    if (i < 26) {
+                        location = AIndex + i;
+                    } else {
+                        location = aIndex - 26 + i;
+                    }
+                    letterWeights.add(new Symbol(location, quantitativeRatioMapAnalysis.get(i) *
                     quantitativeRatioMapLocationAnalysis.get(i).get(index) *
                     quantitativeRatioMapAnalysisOfWord.get(i).get(word.length())));
                 }
                 letterWeights = letterWeights.stream().sorted(Comparator.reverseOrder()).collect(Collectors.toList());
                 wordWeights.add(letterWeights);
                 ++index;
+
+                for (Symbol letterSymbol : letterWeights) {
+                    Optional<Integer> bukva = decodingString.stream().filter(symbol -> symbol.equals(letter.codePointAt(0))).findFirst();
+                        if (bukva.isPresent()) {
+                            decodingString.add(bukva.get());
+                            break;
+                        }
+
+                    if (decodingString.stream().noneMatch(symbol -> symbol.equals(letterSymbol.getLocation()))) {
+                        decodingString.add(letterSymbol.getLocation());
+                        break;
+                    }
+                }
             }
+            decodingString.add(32);
             wordsWeights.add(wordWeights);
         }
 
-        for (int i = 0; i < wordsWeights.size(); i++) {
-            List<List<Symbol>> wordWeights = wordsWeights.get(i);
-            for (int j = 0; j < wordWeights.size(); j++) {
-                List<Symbol> lettersWeights = wordWeights.get(j);
-                if (lettersWeights.get(0).getLocation() < 26) {
-                    System.out.println((char) (lettersWeights.get(0).getLocation() + AIndex));
-                } else {
-                    System.out.println((char) (lettersWeights.get(0).getLocation() + aIndex - 26));
-                }
-                System.out.println(lettersWeights.get(0));
-                for (int k = 0; k < lettersWeights.size(); k++) {
-
-
-                    FileInputStream fileInputStream = new FileInputStream("laboratory1/run/ChristieAgatha.txt");
-                    int n;
-                    ArrayList<Integer> words = new ArrayList<>();
-                    while((n = fileInputStream.read()) != -1) {
-                        if (n == 32) {
-
-                            words.clear();
-                            continue;
-                        }
-
-                        if (65 <= n && n < 91) {
-                            if (n == j + AIndex) {
-
-                            }
-                            words.add(n);
-                        } else if (97 <= n && n < 123) {
-                            if (n == j + aIndex) {
-
-                            }
-                            words.add(n);
-                        }
-                    }
-                    fileInputStream.close();
-
-
-
-                    lettersWeights.get(k);
-                }
-            }
-        }
-
         System.out.println(wordsWeights);
-        System.out.println(decodingString);*/
+        System.out.println(decodingString.stream().map(word -> (char) word.intValue()).collect(Collectors.toList()));
     }
 
     private void frequencyAnalysis() throws IOException {
         getWordsInTxt();
-        /*quantitativeAnalysis();
+        quantitativeAnalysis();
         locationAnalysis();
-        quantitativeAnalysisOfWord();*/
+        quantitativeAnalysisOfWord();
 
         System.out.println(quantitativeRatioMapAnalysis);
         System.out.println(quantitativeRatioMapLocationAnalysis);
@@ -280,9 +248,12 @@ public class Letters {
         int i;
         ArrayList<Integer> word = new ArrayList<>();
         while((i = fileInputStream.read()) != -1) {
-            if (i == 32) {
+            if (i == 32 || i == 10 || i == 13 || i == 46) {
+                if (word.size() == 0) {
+                    continue;
+                }
                 wordsInFile.add(word);
-                word.clear();
+                word = new ArrayList<>();
                 continue;
             }
             if (65 <= i && i < 91 || 97 <= i && i < 123) {
@@ -290,7 +261,5 @@ public class Letters {
             }
         }
         fileInputStream.close();
-
-        System.out.println(wordsInFile);
     }
 }
