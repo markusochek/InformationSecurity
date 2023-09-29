@@ -44,6 +44,7 @@ public class Letters {
 
         ArrayList<Integer> decodingString = new ArrayList<>();
         ArrayList<List<List<Symbol>>> wordsWeights = new ArrayList<>();
+        Map<Integer, Integer> keys = new HashMap<>();
         for (String word : encodingString.toString().split(" ")) {
             int index = 0;
             ArrayList<List<Symbol>> wordWeights = new ArrayList<>();
@@ -65,13 +66,21 @@ public class Letters {
                 ++index;
 
                 for (Symbol letterSymbol : letterWeights) {
-                    Optional<Integer> bukva = decodingString.stream().filter(symbol -> symbol.equals(letter.codePointAt(0))).findFirst();
-                        if (bukva.isPresent()) {
-                            decodingString.add(bukva.get());
-                            break;
+                    int finalIndex = index;
+                    System.out.println(wordsInFile.stream().filter(wordInFile -> {
+                        if (wordInFile.size() > finalIndex && wordInFile.size() == word.length()) {
+                            return wordInFile.get(finalIndex).equals((int) letter.charAt(0));
                         }
+                        return false;
+                    }).collect(Collectors.toList()));
+                    Integer code = keys.get((int) letter.charAt(0));
+                    if (code != null) {
+                        decodingString.add(code);
+                        break;
+                    }
 
                     if (decodingString.stream().noneMatch(symbol -> symbol.equals(letterSymbol.getLocation()))) {
+                        keys.put((int) letter.charAt(0), letterSymbol.getLocation());
                         decodingString.add(letterSymbol.getLocation());
                         break;
                     }
@@ -225,7 +234,7 @@ public class Letters {
             }
 
             String randomLetter = this.getRandomLetter(symbol);
-            this.ratios = Collections.singletonMap(symbol, randomLetter);
+            this.ratios.put(symbol, randomLetter);
             this.encodingString.append(randomLetter);
             this.alphabet = this.alphabet.replace(randomLetter, "");
         }
@@ -252,9 +261,12 @@ public class Letters {
                 if (word.size() == 0) {
                     continue;
                 }
-                wordsInFile.add(word);
-                word = new ArrayList<>();
-                continue;
+                ArrayList<Integer> finalWord = word;
+                if (wordsInFile.stream().noneMatch(wordInFile -> wordInFile.equals(finalWord))) {
+                    wordsInFile.add(word);
+                    word = new ArrayList<>();
+                    continue;
+                }
             }
             if (65 <= i && i < 91 || 97 <= i && i < 123) {
                 word.add(i);
