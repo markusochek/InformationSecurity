@@ -100,71 +100,52 @@ public class Letters {
         locationAnalysis();
         quantitativeAnalysisOfWord();
 
+//        wordsInFile.sort();
+
         System.out.println(quantitativeRatioMapAnalysis);
         System.out.println(quantitativeRatioMapLocationAnalysis);
         System.out.println(quantitativeRatioMapAnalysisOfWord);
     }
 
-    private void quantitativeAnalysis() throws IOException {
-        ArrayList<Integer> quantitativeRatioUpperCaseLetter = new ArrayList<>(Collections.nCopies(26, 0));
-        ArrayList<Integer> quantitativeRatioLowerCaseLetter = new ArrayList<>(Collections.nCopies(26, 0));
+    private void quantitativeAnalysis() {
+        ArrayList<Integer> quantitativeRatioCaseLetter = new ArrayList<>(Collections.nCopies(52, 0));
 
-        FileInputStream fileInputStream = new FileInputStream("laboratory1/run/ChristieAgatha.txt");
-        int i;
-        while((i = fileInputStream.read()) != -1) {
-            if (65 <= i && i < 91) {
-                quantitativeRatioUpperCaseLetter.set(i - AIndex, quantitativeRatioUpperCaseLetter.get(i - AIndex) + 1);
+        wordsInFile.forEach(wordInFile ->wordInFile.forEach(letterCode ->
+        {
+            if (65 <= letterCode && letterCode < 91) {
+                quantitativeRatioCaseLetter.set(letterCode - AIndex, quantitativeRatioCaseLetter.get(letterCode - AIndex) + 1);
                 ++quantitativeAnalysisCount;
-            } else if (97 <= i && i < 123) {
-                quantitativeRatioLowerCaseLetter.set(i - aIndex, quantitativeRatioLowerCaseLetter.get(i - aIndex) + 1);
+            } else if (97 <= letterCode && letterCode < 123) {
+                quantitativeRatioCaseLetter.set(letterCode - AIndex - 6, quantitativeRatioCaseLetter.get(letterCode - AIndex - 6) + 1);
                 ++quantitativeAnalysisCount;
             }
-        }
-        fileInputStream.close();
+        }));
 
-        for (Integer count : quantitativeRatioUpperCaseLetter) {
-            quantitativeRatioMapAnalysis.add(count / quantitativeAnalysisCount);
-        }
-        for (Integer count : quantitativeRatioLowerCaseLetter) {
+        for (Integer count : quantitativeRatioCaseLetter) {
             quantitativeRatioMapAnalysis.add(count / quantitativeAnalysisCount);
         }
     }
 
     private void locationAnalysis() throws IOException {
-        ArrayList<ArrayList<Integer>> quantitativeRatioUpperCaseLetter = new ArrayList<>();
-        ArrayList<ArrayList<Integer>> quantitativeRatioLowerCaseLetter = new ArrayList<>();
-        for (int i = 0; i < this.alphabet.length(); i++) {
-            quantitativeRatioUpperCaseLetter.add(new ArrayList<>(Collections.nCopies(45, 0)));
-            quantitativeRatioLowerCaseLetter.add(new ArrayList<>(Collections.nCopies(45, 0)));
+        ArrayList<ArrayList<Integer>> quantitativeRatioCaseLetter = new ArrayList<>();
+        for (int i = 0; i < this.alphabet.length() * 2; i++) {
+            quantitativeRatioCaseLetter.add(new ArrayList<>(Collections.nCopies(45, 0)));
         }
 
-        FileInputStream fileInputStream = new FileInputStream("laboratory1/run/ChristieAgatha.txt");
-        int i;
-        int wordLength = 0;
-        while((i = fileInputStream.read()) != -1) {
-            if (i == 32) {
-                wordLength = 0;
-                continue;
-            }
+        wordsInFile.forEach(wordInFile ->
+        {
+            for (int i = 0; i < wordInFile.size(); i++) {
+                Integer letterCode = wordInFile.get(i);
 
-            if (65 <= i && i < 91) {
-                quantitativeRatioUpperCaseLetter.get(i - AIndex).set(wordLength, quantitativeRatioUpperCaseLetter.get(i - AIndex).get(wordLength) + 1);
-                ++wordLength;
-            } else if (97 <= i && i < 123) {
-                quantitativeRatioLowerCaseLetter.get(i - aIndex).set(wordLength, quantitativeRatioLowerCaseLetter.get(i - aIndex).get(wordLength) + 1);
-                ++wordLength;
+                if (65 <= letterCode && letterCode < 91) {
+                    quantitativeRatioCaseLetter.get(letterCode - AIndex).set(i, quantitativeRatioCaseLetter.get(letterCode - AIndex).get(i) + 1);
+                } else if (97 <= letterCode && letterCode < 123) {
+                    quantitativeRatioCaseLetter.get(letterCode - AIndex - 6).set(i, quantitativeRatioCaseLetter.get(letterCode - AIndex - 6).get(i) + 1);
+                }
             }
-        }
-        fileInputStream.close();
+        });
 
-        for (ArrayList<Integer> quantitativeRatio : quantitativeRatioUpperCaseLetter) {
-            ArrayList<Float> quantitativeRatioStorage = new ArrayList<>();
-            for (Integer ratio : quantitativeRatio) {
-                quantitativeRatioStorage.add(ratio / quantitativeAnalysisCount);
-            }
-            quantitativeRatioMapLocationAnalysis.add(quantitativeRatioStorage);
-        }
-        for (ArrayList<Integer> quantitativeRatio : quantitativeRatioLowerCaseLetter) {
+        for (ArrayList<Integer> quantitativeRatio : quantitativeRatioCaseLetter) {
             ArrayList<Float> quantitativeRatioStorage = new ArrayList<>();
             for (Integer ratio : quantitativeRatio) {
                 quantitativeRatioStorage.add(ratio / quantitativeAnalysisCount);
@@ -261,12 +242,9 @@ public class Letters {
                 if (word.size() == 0) {
                     continue;
                 }
-                ArrayList<Integer> finalWord = word;
-                if (wordsInFile.stream().noneMatch(wordInFile -> wordInFile.equals(finalWord))) {
-                    wordsInFile.add(word);
-                    word = new ArrayList<>();
-                    continue;
-                }
+                wordsInFile.add(word);
+                word = new ArrayList<>();
+                continue;
             }
             if (65 <= i && i < 91 || 97 <= i && i < 123) {
                 word.add(i);
