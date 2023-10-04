@@ -2,13 +2,17 @@ package laboratory1.run;
 
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class Run {
-    private static HashMap<String, String> ratios = new HashMap<>();
+    private static HashMap<String, String> keys;
+    private static ArrayList<ArrayList<Integer>> words;
+
+    static {
+        Run.keys = new HashMap<>();
+        Run.words = new ArrayList<>();
+    }
 
     public static void main(String[] args) throws IOException {
         String text = "In religion and folklore, hell is a location or state in the afterlife" +
@@ -29,22 +33,26 @@ public class Run {
         StringBuffer encodingString = encode(text);
         System.out.println(encodingString);
         System.out.println(decode(encodingString));
-        hacking(encodingString);
-        getWordsInTxt();
+
+        System.out.println(hacking(text));
     }
 
     private static StringBuffer encode(String text) {
         StringBuffer encodingString = new StringBuffer();
         String alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        ArrayList<Integer> word = new ArrayList<>();
         for (String symbol: text.split("")) {
             if (!(65 <= symbol.charAt(0) && symbol.charAt(0) < 91 || 97 <= symbol.charAt(0) && symbol.charAt(0) < 123)) {
+                words.add(word);
+                word = new ArrayList<>();
                 encodingString.append(symbol);
                 continue;
             }
 
-            String randomLetter = getRandomLetter(symbol, ratios, alphabet);
-            ratios.put(randomLetter, symbol);
+            String randomLetter = getRandomLetter(symbol, keys, alphabet);
+            keys.put(randomLetter, symbol);
             encodingString.append(randomLetter);
+            word.add((int) randomLetter.charAt(0));
             alphabet = alphabet.replace(randomLetter, "");
         }
         return encodingString;
@@ -65,7 +73,7 @@ public class Run {
         StringBuffer decodingString = new StringBuffer();
         for (String encodingSymbol : encodingString.toString().split("")) {
             if (65 <= encodingSymbol.charAt(0) && encodingSymbol.charAt(0) < 91 || 97 <= encodingSymbol.charAt(0) && encodingSymbol.charAt(0) < 123) {
-                decodingString.append(ratios.get(encodingSymbol));
+                decodingString.append(keys.get(encodingSymbol));
             } else {
                 decodingString.append(encodingSymbol);
             }
@@ -73,20 +81,27 @@ public class Run {
         return decodingString;
     }
 
-    private static StringBuffer hacking(StringBuffer encodingString) throws IOException {
+    private static StringBuffer hacking(String text) throws IOException {
+        int AIndex = 65;
+
+        List<QuantitativeRatioMap> quantitativeAnalysisFile = quantitativeAnalysis(getWordsInTxt());
+        List<QuantitativeRatioMap> quantitativeAnalysisInputText = quantitativeAnalysis(words);
+
+        keys = new HashMap<>();
+        for (int i = 0; i < quantitativeAnalysisFile.size(); i++) {
+            keys.put(String.valueOf((char) (quantitativeAnalysisInputText.get(i).getKey().intValue())),
+                    String.valueOf((char) (quantitativeAnalysisFile.get(i).getKey().intValue())));
+        }
+
+        return encode(text);
+    }
+
+    private static List<QuantitativeRatioMap> quantitativeAnalysis(ArrayList<ArrayList<Integer>> wordsInFile) {
         String alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
         Integer AIndex = 65;
         Float quantitativeAnalysisCount = 0F;
-        ArrayList<ArrayList<Integer>> wordsInFile = getWordsInTxt();
 
-        ArrayList<Float> quantitativeRatioLetterAnalysis = new ArrayList<>(Collections.nCopies(52, 0F));
-
-//        ArrayList<ArrayList<Integer>> quantitativeRatioLocationAnalysis = new ArrayList<>();
-//        ArrayList<ArrayList<Integer>> quantitativeRatioLengthOfWord = new ArrayList<>();
-//        for (int i = 0; i < alphabet.length() * 2; i++) {
-//            quantitativeRatioLocationAnalysis.add(new ArrayList<>(Collections.nCopies(45, 0)));
-//            quantitativeRatioLengthOfWord.add(new ArrayList<>(Collections.nCopies(45, 0)));
-//        }
+        ArrayList<Integer> quantitativeRatioLetterAnalysis = new ArrayList<>(Collections.nCopies(52, 0));
 
         for (ArrayList<Integer> wordInFile : wordsInFile) {
             for (int i = 0; i < wordInFile.size(); i++) {
@@ -94,46 +109,22 @@ public class Run {
 
                 if (65 <= letterCode && letterCode < 91) {
                     quantitativeRatioLetterAnalysis.set(letterCode - AIndex, quantitativeRatioLetterAnalysis.get(letterCode - AIndex) + 1);
-//                    quantitativeRatioLocationAnalysis.get(letterCode - AIndex).set(i, quantitativeRatioLocationAnalysis.get(letterCode - AIndex).get(i) + 1);
-//                    quantitativeRatioLengthOfWord.get(letterCode - AIndex).set(wordInFile.size(), quantitativeRatioLengthOfWord.get(letterCode - AIndex).get(wordInFile.size()) + 1);
                 } else if (97 <= letterCode && letterCode < 123) {
                     quantitativeRatioLetterAnalysis.set(letterCode - AIndex - 6, quantitativeRatioLetterAnalysis.get(letterCode - AIndex - 6) + 1);
-//                    quantitativeRatioLocationAnalysis.get(letterCode - AIndex - 6).set(i, quantitativeRatioLocationAnalysis.get(letterCode - AIndex - 6).get(i) + 1);
-//                    quantitativeRatioLengthOfWord.get(letterCode - AIndex - 6).set(wordInFile.size(), quantitativeRatioLengthOfWord.get(letterCode - AIndex - 6).get(wordInFile.size()) + 1);
                 }
                 ++quantitativeAnalysisCount;
             }
         }
 
+        ArrayList<QuantitativeRatioMap> listQuantitativeRatioMap = new ArrayList<>();
         for (int i = 0; i < quantitativeRatioLetterAnalysis.size(); i++) {
-            quantitativeRatioLetterAnalysis.set(i, quantitativeRatioLetterAnalysis.get(i) / quantitativeAnalysisCount);
+            if (65 <= i && i < 91) {
+                listQuantitativeRatioMap.add(new QuantitativeRatioMap(i + AIndex, quantitativeRatioLetterAnalysis.get(i) / quantitativeAnalysisCount));
+            } else if (97 <= i && i < 123) {
+
+            }
         }
-
-//        for (ArrayList<Integer> quantitativeRatio : quantitativeRatioLocationAnalysis) {
-//            ArrayList<Float> quantitativeRatioStorage = new ArrayList<>();
-//            for (Integer ratio : quantitativeRatio) {
-//                quantitativeRatioStorage.add(ratio / quantitativeAnalysisCount);
-//            }
-//            quantitativeRatioMapLocationAnalysis.add(quantitativeRatioStorage);
-//        }
-//
-//        for (ArrayList<Integer> quantitativeRatio : quantitativeRatioLengthOfWord) {
-//            ArrayList<Float> quantitativeRatioStorage = new ArrayList<>();
-//            for (Integer ratio : quantitativeRatio) {
-//                quantitativeRatioStorage.add(ratio / quantitativeAnalysisCount);
-//            }
-//            quantitativeRatioMapAnalysisOfWord.add(quantitativeRatioStorage);
-//        }
-
-//        wordsInFile.sort();
-
-        System.out.println(quantitativeRatioLetterAnalysis);
-
-
-//        System.out.println(quantitativeRatioMapAnalysis);
-//        System.out.println(quantitativeRatioMapLocationAnalysis);
-//        System.out.println(quantitativeRatioMapAnalysisOfWord);
-        return encodingString;
+        return listQuantitativeRatioMap.stream().sorted().collect(Collectors.toList());
     }
 
     private static ArrayList<ArrayList<Integer>> getWordsInTxt() throws IOException {
