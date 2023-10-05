@@ -1,4 +1,4 @@
-package laboratory1.run;
+package letterReplacement.run;
 
 public class QuantitativeRatioMap implements Comparable<QuantitativeRatioMap>{
     private Integer key;

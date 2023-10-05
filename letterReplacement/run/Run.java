@@ -1,4 +1,4 @@
-package laboratory1.run;
+package letterReplacement.run;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -30,8 +30,11 @@ public class Run {
                 " though a more correct translation would be underworld or world of the dead." +
                 " The ancient Mesopotamian, Greek, Roman," +
                 " and Finnic religions include entrances to the underworld from the land of the living.";
+        System.out.println(text);
+
         StringBuffer encodingString = encode(text);
         System.out.println(encodingString);
+
         System.out.println(decode(encodingString));
 
         System.out.println(hacking(text));
@@ -103,14 +106,25 @@ public class Run {
 
         ArrayList<Integer> quantitativeRatioLetterAnalysis = new ArrayList<>(Collections.nCopies(52, 0));
 
+//        ArrayList<ArrayList<Integer>> quantitativeRatioLocationAnalysis = new ArrayList<>();
+//        ArrayList<ArrayList<Integer>> quantitativeRatioLengthOfWord = new ArrayList<>();
+//        for (int i = 0; i < alphabet.length(); i++) {
+//            quantitativeRatioLocationAnalysis.add(new ArrayList<>(Collections.nCopies(45, 0)));
+//            quantitativeRatioLengthOfWord.add(new ArrayList<>(Collections.nCopies(45, 0)));
+//        }
+
         for (ArrayList<Integer> wordInFile : wordsInFile) {
             for (int i = 0; i < wordInFile.size(); i++) {
                 Integer letterCode = wordInFile.get(i);
 
                 if (65 <= letterCode && letterCode < 91) {
                     quantitativeRatioLetterAnalysis.set(letterCode - AIndex, quantitativeRatioLetterAnalysis.get(letterCode - AIndex) + 1);
+//                    quantitativeRatioLocationAnalysis.get(letterCode - AIndex).set(i, quantitativeRatioLocationAnalysis.get(letterCode - AIndex).get(i) + 1);
+//                    quantitativeRatioLengthOfWord.get(letterCode - AIndex).set(wordInFile.size(), quantitativeRatioLengthOfWord.get(letterCode - AIndex).get(wordInFile.size()) + 1);
                 } else if (97 <= letterCode && letterCode < 123) {
                     quantitativeRatioLetterAnalysis.set(letterCode - AIndex - 6, quantitativeRatioLetterAnalysis.get(letterCode - AIndex - 6) + 1);
+//                    quantitativeRatioLocationAnalysis.get(letterCode - AIndex - 6).set(i, quantitativeRatioLocationAnalysis.get(letterCode - AIndex - 6).get(i) + 1);
+//                    quantitativeRatioLengthOfWord.get(letterCode - AIndex - 6).set(wordInFile.size(), quantitativeRatioLengthOfWord.get(letterCode - AIndex - 6).get(wordInFile.size()) + 1);
                 }
                 ++quantitativeAnalysisCount;
             }
@@ -118,11 +132,7 @@ public class Run {
 
         ArrayList<QuantitativeRatioMap> listQuantitativeRatioMap = new ArrayList<>();
         for (int i = 0; i < quantitativeRatioLetterAnalysis.size(); i++) {
-            if (65 <= i && i < 91) {
-                listQuantitativeRatioMap.add(new QuantitativeRatioMap(i + AIndex, quantitativeRatioLetterAnalysis.get(i) / quantitativeAnalysisCount));
-            } else if (97 <= i && i < 123) {
-
-            }
+            listQuantitativeRatioMap.add(new QuantitativeRatioMap(i, quantitativeRatioLetterAnalysis.get(i) / quantitativeAnalysisCount));
         }
         return listQuantitativeRatioMap.stream().sorted().collect(Collectors.toList());
     }
@@ -130,7 +140,7 @@ public class Run {
     private static ArrayList<ArrayList<Integer>> getWordsInTxt() throws IOException {
         ArrayList<ArrayList<Integer>> wordsInFile = new ArrayList<>();
 
-        FileInputStream fileInputStream = new FileInputStream("laboratory1/txt/ChristieAgatha.txt");
+        FileInputStream fileInputStream = new FileInputStream("letterReplacement/txt/ChristieAgatha.txt");
         int i;
         ArrayList<Integer> word = new ArrayList<>();
         while((i = fileInputStream.read()) != -1) {
