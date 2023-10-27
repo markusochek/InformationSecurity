@@ -1,0 +1,12 @@
+﻿  ConsoleApplication1.cpp
+C:\Users\user\Downloads\InformationSecurity-master\Gost-89\ConsoleApplication1\ConsoleApplication1.cpp(14,28): warning C4267: инициализация: преобразование из "size_t" в "int"; возможна потеря данных
+C:\Users\user\Downloads\InformationSecurity-master\Gost-89\ConsoleApplication1\ConsoleApplication1.cpp(15,30): warning C4267: инициализация: преобразование из "size_t" в "int"; возможна потеря данных
+C:\Users\user\Downloads\InformationSecurity-master\Gost-89\ConsoleApplication1\ConsoleApplication1.cpp(35,27): warning C4267: инициализация: преобразование из "size_t" в "int"; возможна потеря данных
+C:\Users\user\Downloads\InformationSecurity-master\Gost-89\ConsoleApplication1\ConsoleApplication1.cpp(36,30): warning C4267: инициализация: преобразование из "size_t" в "int"; возможна потеря данных
+C:\Users\user\Downloads\InformationSecurity-master\Gost-89\ConsoleApplication1\ConsoleApplication1.cpp(51,15): warning C4244: аргумент: преобразование "time_t" в "unsigned int", возможна потеря данных
+  Gost-89.cpp
+C:\Users\user\Downloads\InformationSecurity-master\Gost-89\ConsoleApplication1\Gost-89.cpp(107,24): warning C4267: инициализация: преобразование из "size_t" в "int"; возможна потеря данных
+C:\Users\user\Downloads\InformationSecurity-master\Gost-89\ConsoleApplication1\Gost-89.cpp(185,24): warning C4267: инициализация: преобразование из "size_t" в "int"; возможна потеря данных
+C:\Users\user\Downloads\InformationSecurity-master\Gost-89\ConsoleApplication1\Gost-89.cpp(205,15): warning C4244: аргумент: преобразование "time_t" в "unsigned int", возможна потеря данных
+  Создание кода...
+  ConsoleApplication1.vcxproj -> C:\Users\user\Downloads\InformationSecurity-master\Gost-89\x64\Debug\ConsoleApplication1.exe
